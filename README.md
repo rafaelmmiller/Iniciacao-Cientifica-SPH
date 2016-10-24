@@ -11,6 +11,6 @@
 
 # Referências
 
-Curso de C++: http://101.lv/learn/C++/
-Outro curso de C++: http://www.cplusplus.com/doc/tutorial/
-Vídeos sobre C++: https://www.youtube.com/playlist?list=PLesCEcYj003QTw6OhCOFb1Fdl8Uiqyrqo
+- Curso de C++: http://101.lv/learn/C++/
+- Outro curso de C++: http://www.cplusplus.com/doc/tutorial/
+- Vídeos sobre C++: https://www.youtube.com/playlist?list=PLesCEcYj003QTw6OhCOFb1Fdl8Uiqyrqo
