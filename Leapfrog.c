@@ -1,4 +1,4 @@
-//Alterar a funÁ„o double f(double x)
+//Alterar a fun√ß√£o double f(double x)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,9 +14,9 @@ void LeapFrog(double *r, double *v, double *a, double K, double M, int *i);
 double F(double r, double K, double M);
 
 int main(){
-	double r, v, a;				//posiÁ„o, velocidade e aceleraÁ„o escalares
+	double r, v, a;				//posi√ß√£o, velocidade e acelera√ß√£o escalares
 	double K, M;				//dureza da mola e massa acoplada
-	double t=0, T;				//tempos de simulaÁ„o
+	double t=0, T;				//tempos de simula√ß√£o
 	int i=0;
 	char k;
 	printf("Do you want to try the harmonic oscillator? (Y/N): ");
@@ -101,6 +101,6 @@ double F(double r, double K, double M){
 		return (((-K)*r)/M);
 	}
 	else{
-		return 0.01*cos(r);				//inserir uma funÁ„o arbitr·ria de r
+		return 0.01*cos(r);				//inserir uma fun√ß√£o arbitr√°ria de r
 	}
 }
