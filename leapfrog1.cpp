@@ -4,8 +4,6 @@ using namespace std;
 
 //leap frog method
 
-enum Sistemas {linear,harmonico};
-
 class Particle
 	{
 	private:
@@ -86,7 +84,7 @@ for (int i; i<(T/dt); i++)
 		Time [i] = dt*i;
 	}
 //Imprime os arrays num arquivo de texto
-ofstream myfile ("/home/francisco/myfile.txt");	
+ofstream myfile ("/home/francisco/myfile.txt");	//Arquivo do meu PC
 if (myfile.is_open())
 {
 
