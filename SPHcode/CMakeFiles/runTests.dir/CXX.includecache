@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/rafael/Documentos/Iniciacao-Cientifica-SPH/SPHcode/src/main.cpp
+math.h
+-
+
+/home/rafael/Documentos/Iniciacao-Cientifica-SPH/SPHcode/tests/tests.cpp
+../src/main.cpp
+/home/rafael/Documentos/Iniciacao-Cientifica-SPH/SPHcode/src/main.cpp
+gtest/gtest.h
+-
+
