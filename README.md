@@ -1,5 +1,13 @@
 # Iniciação Científica: Implementações do Método SPH
 
+## Organização dos códigos
+
+Durante as primeiras semanas da iniciação, foram feitos vários testes e soluções de problemas simples com o método SPH. Os arquivos referentes a essas soluções e testes estão dispostos nas pastas de cada aluno que o escreveu.
+
+O código com a implementação do método SPH está disposto em `/SPHcode`. Essa pasta possui um `README.md` somente para o código.
+
+
+
 ## Cronograma
 
 - 14/10: - Ler Cap.I e II das notas de Mec Flu.
