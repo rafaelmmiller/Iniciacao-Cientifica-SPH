@@ -3,6 +3,7 @@
 #include <fstream>
 using namespace std;
 
+//Função Kernel
 double Kernel(double q, double h)
 {
 	double R = 0;
@@ -20,6 +21,7 @@ double Kernel(double q, double h)
 		}
 	return (R);
 }
+//Função Gradiente do Kernel
 double GradKernel(double q, double h)
 	{
 		double R = 0;
@@ -57,10 +59,7 @@ class Particle
 	float velo_t;
 	float a_t;
 	float mass;
-	float density; 
-	
-	void SetMass(double mass);
-	double GetMass();
+
 	Particle();
 	};
 	
@@ -88,8 +87,8 @@ class ParticleSystem
 	ParticleSystem::ParticleSystem()
 { 
 }
-
-	void ParticleSystem::Boundaries()
+//Fronteira do tipo Toro. Quando uma particula sai do [-1,1], é recolocada do outro lado.
+void ParticleSystem::Boundaries()
 	{
 		for ( int i =0; i < 200; i++)
 		{
@@ -104,6 +103,7 @@ class ParticleSystem
 				}
 		}
 	}
+//Inicializa as particulas de maneira igualmente espaçada com velociadade zero.
 	void ParticleSystem::initialize(float dt)
 	{	
 		double GridGauge = 2/200.0;
@@ -144,7 +144,7 @@ double ParticleSystem::CalculateDensity(Particle * p1, double h)
 		}
 	return A;
 }
-
+//Função que permite ao sistema evoluir no tempo.
 void ParticleSystem::Step( float dt)
 {
 for (unsigned short int i =0; i< 200; i++)
@@ -191,3 +191,5 @@ myfile.close();
 }
 
 }
+// O programa termina de rodar dentro de poucos minutos, e tem como
+// saída um arquivo de texto com os pares (posição, densidade).
