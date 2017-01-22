@@ -151,11 +151,12 @@ for (unsigned short int i =0; i< 200; i++)
 	{	
 		Particle* p1 = &Particles[i];
 		//Calcula aceleracao
+		double A = pi->a_t;
 		p1->a_t = -(0.5)*CalculateDensityGrad(&Particles[i],0.12)- p1->x_t-(0.02*p1->velo_t);
 		//Calcula v
-		p1->velo_t = (p1->velo_t + p1->a_t*dt);
+		p1->velo_t = p1->velo_t + 0.5*(A + p1->a_t)*dt;
 		//Calcula a nova posicao
-		p1->x_t = (p1->x_t + p1->velo_t*dt);
+		p1->x_t = p1->x_t + p1->velo_t * dt + 0.5*A*pow(dt,2); 
 	}
 }
 int main()
