@@ -88,6 +88,7 @@ void Finding_Neighbours(int i, int Array[54], int mat[25][25][6], Particle Vecto
 void Pressure_Acceleration(int i, double a[2], int Array[54], int mat[25][25][6], Particle Vector[1001]); //a instância que chamar esta função deve zerar a[2].
 double Density_SPH(int i, int Array[54], int mat[25][25][6], Particle Vector[1001]);
 void Initialize(int mat[25][25][6], Particle Vector[1001]);
+void LeapFrog(double *r, double *v, double *a, int *i);
 
 int main(){
 	/*printf("Entre com a constante de proporcionalidade da forca atrativa: ");
@@ -111,8 +112,8 @@ int main(){
 	Particle System[1001];
 	int mat[25][25][6];
 	Initialize(mat, System);
-	/*int i, p, q, r;
-	printf("Entre com o numero de uma particula para ter acesso a suas grandezas: ");
+	int i, p, q, r;
+	/*printf("Entre com o numero de uma particula para ter acesso a suas grandezas: ");
 	scanf("%d", &i);
 	double a[2];
 	System[i].GetPosition(a);
@@ -121,8 +122,8 @@ int main(){
 	printf("Velocidade: (%lf, %lf)\n", a[0], a[1]);
 	System[i].GetAcceleration(a);
 	printf("Aceleracao: (%lf, %lf)\n", a[0], a[1]);
-	printf("Densidade: %lf, Pressao: %lf", System[i].GetDensity(), System[i].GetPressure());
-	return 0;*/
+	printf("Densidade: %lf, Pressao: %lf", System[i].GetDensity(), System[i].GetPressure());*/
+	return 0;
 }
 	
 double Distance(double a[2], double b[2]){
@@ -130,6 +131,7 @@ double Distance(double a[2], double b[2]){
 }
 
 double Kernel(double q){
+	//return 1.0;
 	double c_h=15/(14*PI*pow(h,2));
 	if(q>=0 && q<1) return c_h*(pow(2-q, 3)-4*pow(1-q, 3));
 	else if(q>=1 && q<2) return c_h*(pow(2-q, 3));
@@ -137,6 +139,9 @@ double Kernel(double q){
 }
 
 void Kernel_Gradient(double q, double a[2], double b[2], double c[2]){
+	/*c[0]=1;0;
+	c[1]=1.0;
+	return ;*/
 	double c_h=15/(14*PI*pow(h,2));
 	if(q>=0 && q<1){
 		c[0]=c_h*((-3.0/h)*pow(2-q, 2)*((a[0]-b[0])/(q*h))+(12.0/h)*pow(1-q, 2)*((a[0]-b[0])/(q*h)));		//O vetor c é o gradiente do kernel.
@@ -275,9 +280,9 @@ void Initialize(int mat[25][25][6], Particle Vector[1001]){
 	int i;
 	for(i=0; i<=1000; i++){
 		Vector[i].SetSystem();
-		/*double a[2];
+		double a[2];
 		Vector[i].GetPosition(a);
-		printf("%lf %lf\n", a[0], a[1]);*/
+		printf("%lf %lf\n", a[0], a[1]);
 	}
 	Fill_Matrix(mat, Vector);
 	for(i=0; i<=1000; i++){
@@ -287,7 +292,7 @@ void Initialize(int mat[25][25][6], Particle Vector[1001]){
 		for(j=0; j<54; j++) Array[j]=0;
 		Pressure_Acceleration(i, a, Array, mat, Vector);
 		Vector[i].SetAcceleration(a);
-		//printf("(%14.10lf, %14.10lf)\n", a[0], a[1]);
+		printf("(%14.10lf, %14.10lf)\n", a[0], a[1]);
 	}
 	for(i=0; i<=1000; i++){
 		int Array[54], j;
@@ -295,4 +300,8 @@ void Initialize(int mat[25][25][6], Particle Vector[1001]){
 		Vector[i].SetDensity(Density_SPH(i, Array, mat, Vector));
 		Vector[i].SetPressure(K*pow(Density_SPH(i, Array, mat, Vector), 2));
 	}
+}
+
+void Leap_Frog(){
+	
 }
