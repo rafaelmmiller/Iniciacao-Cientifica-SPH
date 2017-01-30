@@ -77,6 +77,10 @@ class Particle{
 				Grid_Position[1]=( (int) ((v[1]+1)/(2*h)) );
 			}
 		}
+		void SetPrevious_Velocity(double a[2]){
+            Previous_Velocity[0]=a[0];
+            Previous_Velocity[1]=a[1];
+		}
 };
 
 /*o tamanho da matriz se refere ao número de células em que se pretende dividir
@@ -88,7 +92,8 @@ void Finding_Neighbours(int i, int Array[54], int mat[25][25][6], Particle Vecto
 void Pressure_Acceleration(int i, double a[2], int Array[54], int mat[25][25][6], Particle Vector[1001]); //a instância que chamar esta função deve zerar a[2].
 double Density_SPH(int i, int Array[54], int mat[25][25][6], Particle Vector[1001]);
 void Initialize(int mat[25][25][6], Particle Vector[1001]);
-void LeapFrog(double *r, double *v, double *a, int *i);
+void Compute_Accelerations(int mat[25][25][6], Particle Vector [1001]);
+void LeapFrog(int i, Particle Vector);
 
 int main(){
 	/*printf("Entre com a constante de proporcionalidade da forca atrativa: ");
@@ -112,7 +117,7 @@ int main(){
 	Particle System[1001];
 	int mat[25][25][6];
 	Initialize(mat, System);
-	int i, p, q, r;
+	int i;
 	/*printf("Entre com o numero de uma particula para ter acesso a suas grandezas: ");
 	scanf("%d", &i);
 	double a[2];
@@ -285,7 +290,15 @@ void Initialize(int mat[25][25][6], Particle Vector[1001]){
 		printf("%lf %lf\n", a[0], a[1]);
 	}
 	Fill_Matrix(mat, Vector);
-	for(i=0; i<=1000; i++){
+	Compute_Accelerations(mat, Vector);
+}
+
+//Esta função calcula a aceleração, a densidade e a pressão na posição de
+//cada partícula a partir de uma dada distribuição espacail e de velocidades
+
+void Compute_Accelerations(int mat[25][25][6], Particle Vector[1001]){
+    int i;
+    for(i=0; i<=1000; i++){
 		double a[2], b[2], c[2], d[2];
 		int Array[54], j;
 		a[0]=a[1]=0;
@@ -315,6 +328,34 @@ void Initialize(int mat[25][25][6], Particle Vector[1001]){
 	}
 }
 
-void Leap_Frog(){
+void Leap_Frog(int i, int mat[25][25][6], Particle Vector[1001]){
+    if(i%2==0){
+        int j;
+        for(j=0; j<1000; j++){
+            double a[2], b[2];
+            Vector[j].GetPosition(a);
+            Vector[j].GetVelocity(b);
+            a[0] += b[0]*dt;
+            a[1] += b[1]*dt;
+            Vector[j].SetPosition(a);
+            Vector[j].SetGrid_Position();
+            printf("(%14.10lf, %14.10lf)\n", a[0], a[1]);
 
+        }
+        Fill_Matrix(mat, Vector);
+        Compute_Accelerations(mat, Vector);
+    }
+    if(i%2==1){
+        int j;
+        for(j=0; j<1000; j++){
+            double a[2], b[2];
+            Vector[j].GetVelocity(a);
+            Vector[j].SetPrevious_Velocity(a);
+            Vector[j].GetAcceleration(b);
+            a[0] += b[0]*dt;
+            a[1] += b[1]*dt;
+            Vector[j].SetVelocity(a);
+            printf("(%14.10lf, %14.10lf)\n", a[0], a[1]);
+        }
+    }
 }
