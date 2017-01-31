@@ -9,7 +9,6 @@
 
 double Mass=2E-3, Ni=0.5, Eta=0.1, K=0.1;		//massa das partículas, constante de proporcionalidade do amortecimento, da força e da equação de estado, em kg, 1/s, 1/(kg.s²) (ou J/(kg².m²)) e m^5/(kg.s²).
 double dt=4E-3, h=4E-2;							//passo de tempo e "largura" do kernel
-int flag=FALSE;
 
 double Distance(double a[2], double b[2]);
 double Kernel(double q);
@@ -84,7 +83,7 @@ class Particle{
 };
 
 /*o tamanho da matriz se refere ao número de células em que se pretende dividir
-o espaço [-1, 1]x[-1, 1] (até 50x50 células), e o número máximo permitido
+o espaço [-1, 1]x[-1, 1] (até 25x25 células), e o número máximo permitido
 de partículas numa mesma célula (até seis partículas)*/
 
 void Fill_Matrix(int mat[25][25][6], Particle Vector[1001]);
@@ -93,7 +92,7 @@ void Pressure_Acceleration(int i, double a[2], int Array[54], int mat[25][25][6]
 double Density_SPH(int i, int Array[54], int mat[25][25][6], Particle Vector[1001]);
 void Initialize(int mat[25][25][6], Particle Vector[1001]);
 void Compute_Accelerations(int mat[25][25][6], Particle Vector [1001]);
-void LeapFrog(int i, Particle Vector);
+void Leap_Frog(int i, int mat[25][25][6], Particle Vector[1001]);
 
 int main(){
 	/*printf("Entre com a constante de proporcionalidade da forca atrativa: ");
@@ -118,16 +117,14 @@ int main(){
 	int mat[25][25][6];
 	Initialize(mat, System);
 	int i;
-	/*printf("Entre com o numero de uma particula para ter acesso a suas grandezas: ");
-	scanf("%d", &i);
-	double a[2];
-	System[i].GetPosition(a);
-	printf("Posicao: (%lf, %lf)\n", a[0], a[1]);
-	System[i].GetVelocity(a);
-	printf("Velocidade: (%lf, %lf)\n", a[0], a[1]);
-	System[i].GetAcceleration(a);
-	printf("Aceleracao: (%lf, %lf)\n", a[0], a[1]);
-	printf("Densidade: %lf, Pressao: %lf", System[i].GetDensity(), System[i].GetPressure());*/
+	for(i=1; i<100; i++)
+        Leap_Frog(i, mat, System);
+    printf("\n\n Mil passos depois: \n\n");
+    for(i=1; i<1000; i++){
+        double a[2];
+		System[i].GetPosition(a);
+		printf("%lf %lf\n", a[0], a[1]);
+    }
 	return 0;
 }
 
@@ -136,7 +133,6 @@ double Distance(double a[2], double b[2]){
 }
 
 double Kernel(double q){
-	//return 1.0;
 	double c_h=15/(14*PI*pow(h,2));
 	if(q>=0 && q<1) return c_h*(pow(2-q, 3)-4*pow(1-q, 3));
 	else if(q>=1 && q<2) return c_h*(pow(2-q, 3));
@@ -144,9 +140,6 @@ double Kernel(double q){
 }
 
 void Kernel_Gradient(double q, double a[2], double b[2], double c[2]){
-	/*c[0]=1;0;
-	c[1]=1.0;
-	return ;*/
 	double c_h=15/(14*PI*pow(h,2));
 	if(q>=0 && q<1){
 		c[0]=c_h*((3.0/h)*pow(2-q, 2)*((a[0]-b[0])/(q*h))-(12.0/h)*pow(1-q, 2)*((a[0]-b[0])/(q*h)));		//O vetor c é o gradiente do kernel.
@@ -318,7 +311,7 @@ void Compute_Accelerations(int mat[25][25][6], Particle Vector[1001]){
 		a[0] += d[0];
         a[1] += d[1];
 		Vector[i].SetAcceleration(a);
-		printf("(%14.10lf, %14.10lf)\n", a[0], a[1]);
+		//printf("(%14.10lf, %14.10lf)\n", a[0], a[1]);
 	}
 	for(i=0; i<=1000; i++){
 		int Array[54], j;
@@ -339,7 +332,7 @@ void Leap_Frog(int i, int mat[25][25][6], Particle Vector[1001]){
             a[1] += b[1]*dt;
             Vector[j].SetPosition(a);
             Vector[j].SetGrid_Position();
-            printf("(%14.10lf, %14.10lf)\n", a[0], a[1]);
+            //printf("(%14.10lf, %14.10lf)\n", a[0], a[1]);
 
         }
         Fill_Matrix(mat, Vector);
@@ -355,7 +348,7 @@ void Leap_Frog(int i, int mat[25][25][6], Particle Vector[1001]){
             a[0] += b[0]*dt;
             a[1] += b[1]*dt;
             Vector[j].SetVelocity(a);
-            printf("(%14.10lf, %14.10lf)\n", a[0], a[1]);
+            //printf("(%14.10lf, %14.10lf)\n", a[0], a[1]);
         }
     }
 }
