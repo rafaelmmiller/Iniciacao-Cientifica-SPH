@@ -64,7 +64,7 @@ void ParticleSystem::Boundaries()
 					{
 						if (Particles[i].GetV0() > 0)
 						{
-							Particles[i].SetV0(-0.6*Particles[i].GetX0());
+							Particles[i].SetV0(-0.6*Particles[i].GetV0());
 						}
 					}
 				if (Particles[i].GetX0()< -1)
@@ -173,7 +173,7 @@ int main()
 {
 clock_t tStart = clock();
 //smoothing lenght
-double h = 0.2;
+double h = 0.1;
 
 ParticleSystem * PS1 = new ParticleSystem;
 PS1->initialize(0.004, h);
@@ -210,5 +210,15 @@ if (myfile3.is_open())
 	}
 }
 
+ofstream myfile4 ("/home/francisco/myfile6.txt");
+{
+if (myfile4.is_open())
+{	
+	for (int l = 0; l<1000; l++)
+	{
+		myfile4 << PS1->Particles[l].GetX0() << "," << PS1->Particles[l].GetX1() << "\n";
+	}
+}
+}
 
 }
