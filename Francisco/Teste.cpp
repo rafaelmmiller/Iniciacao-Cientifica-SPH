@@ -17,7 +17,7 @@ class ParticleSystem
 		~ParticleSystem();
 		
 		//Inicializa a posicao, velocidade e aceleracao das particulas
-		void initialize();
+		void initialize(double dt, double h);
 		
 		//Faz com que o sistema de um passo temporal
 		void Step(double dt, double h);
@@ -60,56 +60,34 @@ void ParticleSystem::Boundaries()
 {
 	for (int i =0; i < 1000; i++)
 	{
-				if (Particles[i].GetX0() > 0.95)
+				if (Particles[i].GetX0() > 1)
 					{
 						if (Particles[i].GetV0() > 0)
 						{
 							Particles[i].SetV0(-0.6*Particles[i].GetX0());
 						}
 					}
-				if (Particles[i].GetX0()< -0.95)
+				if (Particles[i].GetX0()< -1)
 					{
 						if (Particles[i].GetV0() < 0)
 						{
 							Particles[i].SetV0(-0.6*Particles[i].GetV0());
 						}
 					}
-				if (Particles[i].GetX1() > 0.95)
+				if (Particles[i].GetX1() > 1)
 					{
 						if (Particles[i].GetV1()>0)
 						{
 							Particles[i].SetV1(-0.6*Particles[i].GetV1());
 						}
 					}
-				if (Particles[i].GetX1() < -0.95)
+				if (Particles[i].GetX1() < -1)
 					{
 						if (Particles[i].GetV1()<0)
 						{
 							Particles[i].SetV1(-0.6*Particles[i].GetV1());
 						}
 					}
-	}
-}
-
-//INICIALIZA ALEATORIAMENTE A POSICAO DAS PARTICULAS NUM QUADRADO DE LADO 2		
-void ParticleSystem::initialize()
-{
-	srand(time(NULL));
-	double m = 2/1000.0;
-	for (int i = 0; i<1000; i++)
-	{
-				Particle* p1 = &Particles[i];
-				
-				p1->SetMass(m);
-				
-				p1->SetX0((rand() % 20000)/10000.0 - 1);
-				p1->SetX1((rand() % 20000)/10000.0 - 1);
-				
-				p1->SetV0(0);
-				p1->SetV1(0);
-				
-				p1->SetA0(0);
-				p1->SetA1(0);
 	}
 }
 
@@ -144,6 +122,29 @@ for (unsigned int i =0; i <Grid.size(); i++)
 return A;
 }
 
+void ParticleSystem::initialize(double dt, double h)
+{
+	srand(time(NULL));
+	double m = 1/1000.0;
+	for (int i = 0; i<1000; i++)
+	{
+				Particle* p1 = &Particles[i];
+				
+				std::vector<Particle*> Grid = Find_Neighbours(p1,h);
+				
+				p1->SetMass(m);
+				
+				p1->SetX0((rand() % 20000)/10000.0 - 1);
+				p1->SetX1((rand() % 20000)/10000.0 - 1);
+				
+				p1->SetA0(-(0.5)*CalculateDensityGradX(p1,Grid,h) -p1->GetX0());
+				p1->SetA1(-(0.5)*CalculateDensityGradY(p1,Grid,h) -p1->GetX1());
+				
+				p1->SetV0(p1->GetA0()*(dt/2));
+				p1->SetV1(p1->GetA1()*(dt/2));
+	}
+}
+
 void ParticleSystem::Step(double dt, double h)
 {
 	for (int i = 0; i< 1000; i++)
@@ -151,20 +152,19 @@ void ParticleSystem::Step(double dt, double h)
 				Particle* p1 = &Particles[i];
 				
 				std::vector<Particle*> Grid = Find_Neighbours(p1,h);
-			
-				double A1 = p1->GetA0();
-				double A2 = p1->GetA1();
 				
-				p1->SetA0(-(0.5)*CalculateDensityGradX(p1,Grid,h) - 10*p1->GetX0()-0.5*(p1->GetV0()));
-				p1->SetA1(-(0.5)*CalculateDensityGradY(p1,Grid,h) - 10*p1->GetX1()-0.5*(p1->GetV1()));
+				double X0_prev = p1->GetX0();
+				double X1_prev = p1->GetX1();
 				
-				p1->SetV0(p1->GetV0() + 0.5*(A1 + p1->GetA0())*dt);
-				p1->SetV1(p1->GetV1() + 0.5*(A2 + p1->GetA1())*dt);
+				p1->SetX0(p1->GetX0() + p1->GetV0()*dt);
+				p1->SetX1(p1->GetX1() + p1->GetV1()*dt);
 				
-				p1->SetX0(p1->GetX0() + p1->GetV0()*dt + 0.5*A1*pow(dt,2));
-				p1->SetX1(p1->GetX1() + p1->GetV1()*dt + 0.5*A2*pow(dt,2));
+				p1->SetA0(-(0.5)*CalculateDensityGradX(p1,Grid,h) -X0_prev -0.5*(p1->GetV0()));
+				p1->SetA1(-(0.5)*CalculateDensityGradY(p1,Grid,h) -X1_prev -0.5*(p1->GetV1()));
 				
-				//ITERACAO TEMPORAL NO METODO LEAPFROG FEITO EM UMA UNICA ETAPA
+				p1->SetV0(p1->GetV0() + p1->GetA0()*dt);
+				p1->SetV1(p1->GetV1() + p1->GetA1()*dt);
+				
 		}
 }
 
@@ -173,10 +173,10 @@ int main()
 {
 clock_t tStart = clock();
 //smoothing lenght
-double h = 0.12;
+double h = 0.2;
 
 ParticleSystem * PS1 = new ParticleSystem;
-PS1->initialize();
+PS1->initialize(0.004, h);
 for (int i = 0; i< 10000; i++)
 	{
 		PS1->Step(0.004, h);
