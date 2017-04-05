@@ -79,15 +79,15 @@ void acceleration(particle_prop part[], float nu, float lambda)   //aceleração
 			part[i].acc[j] = -nu*part[i].vel[j]-lambda*part[i].pos[j];
 		}
 	}
-	double r, sum[Dim], p_over_rho2;
+	double r, sum[Dim], pressure;
 	for (unsigned int i=0; i<N_Part; i++){
 		sum[0]=sum[1]=0;	
 		for (unsigned int j=0; j<N_Part; j++)
 			if(j!=i){
 				r = dist(part[i].pos,part[j].pos);
-				p_over_rho2 = press(part[i].dens)/(part[i].dens*part[i].dens)+press(part[j].dens)/(part[j].dens*part[j].dens);
+				pressure = press(part[i].dens)/(part[i].dens*part[i].dens)+press(part[j].dens)/(part[j].dens*part[j].dens);
 				for(int d=0; d<Dim; d++)
-					sum[d] += part[j].mass*p_over_rho2*gradkern(r)*(part[i].pos[d]-part[j].pos[d])/r;
+					sum[d] += part[j].mass*pressure*gradkern(r)*(part[i].pos[d]-part[j].pos[d])/r;
 			}
 		for(int d=0; d<Dim; d++)
 			part[i].acc[d] -= sum[d]; 
